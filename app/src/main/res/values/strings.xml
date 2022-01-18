@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">AttendMe</string>
+    <string name="ask">Are you teacher or student ?</string>
+    <string name="teacher">TEACHER</string>
+    <string name="student">STUDENT</string>
+    <string name="teachername">Enter name</string>
+    <string name="studentname">Enter name</string>
+    <string name="studentroll">Enter roll number</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_activity_list_of_classes">ListOfClasses</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+</resources>
