@@ -21,8 +21,8 @@ public class CreateStudent extends DialogFragment {
     }
     public interface DismissListener {
         public void onDismiss(@NonNull DialogInterface dialog);
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
+        public void onDialogPositiveClick(DialogFragment dialog,int i);
+        public void onDialogNegativeClick(DialogFragment dialog,int i);
     }
     DismissListener listener;
     @NonNull
@@ -48,14 +48,14 @@ public class CreateStudent extends DialogFragment {
                             db.createStudent();
                             db.insertStudent(studentname.getText().toString(),MainActivity.MY_ID,Integer.parseInt(studentroll.getText().toString()));
                         }
-                        listener.onDialogPositiveClick(CreateStudent.this);
+                        listener.onDialogPositiveClick(CreateStudent.this,1);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         onCancel(dialogInterface);
-                        listener.onDialogNegativeClick(CreateStudent.this);
+                        listener.onDialogNegativeClick(CreateStudent.this,1);
                     }
                 });
         return builder.create();

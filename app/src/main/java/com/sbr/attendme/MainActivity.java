@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -23,7 +24,8 @@ public class MainActivity extends AppCompatActivity implements CreateTeacher.Dis
         MY_ID= Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         db=new DBHelper(this);
         if(db.tableExists(DBHelper.TEACHER_TABLE_NAME)) {
-            Toast.makeText(this,"teacher exist",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, ListOfClasses.class);
+            startActivity(intent);
         }
         else if(db.tableExists(DBHelper.STUDENT_TABLE_NAME)) {
             Toast.makeText(this,"student exist",Toast.LENGTH_SHORT).show();
@@ -50,12 +52,15 @@ public class MainActivity extends AppCompatActivity implements CreateTeacher.Dis
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        Toast.makeText(this,"going to hell",Toast.LENGTH_SHORT).show();
+    public void onDialogPositiveClick(DialogFragment dialog,int i) {
+        if(i==0) {
+            Intent intent = new Intent(this, ListOfClasses.class);
+            startActivity(intent);
+        }
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
+    public void onDialogNegativeClick(DialogFragment dialog,int i) {
 
     }
 }

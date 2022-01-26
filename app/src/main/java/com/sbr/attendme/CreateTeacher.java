@@ -21,8 +21,8 @@ public class CreateTeacher extends DialogFragment {
     }
     public interface DismissListener {
         public void onDismiss(@NonNull DialogInterface dialog);
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
+        public void onDialogPositiveClick(DialogFragment dialog,int i);
+        public void onDialogNegativeClick(DialogFragment dialog,int i);
     }
     DismissListener listener;
     @NonNull
@@ -47,14 +47,14 @@ public class CreateTeacher extends DialogFragment {
                             db.createTeacher();
                             db.insertTeacher(teachername.getText().toString(),MainActivity.MY_ID);
                         }
-                        listener.onDialogPositiveClick(CreateTeacher.this);
+                        listener.onDialogPositiveClick(CreateTeacher.this,0);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         onCancel(dialogInterface);
-                        listener.onDialogNegativeClick(CreateTeacher.this);
+                        listener.onDialogNegativeClick(CreateTeacher.this,0);
                     }
                 });
         return builder.create();

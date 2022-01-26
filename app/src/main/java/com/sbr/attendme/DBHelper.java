@@ -1,5 +1,6 @@
 package com.sbr.attendme;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyDBName.db";
@@ -95,6 +98,33 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBHelper.CLASS_STREAM,stream);
         contentValues.put(DBHelper.CLASS_SESSION,session);
         getWritableDatabase().insert(DBHelper.CLASS_TABLE_NAME,null,contentValues);
+    }
+    public void insertClass(Classs classs) {
+        ContentValues contentValues=new ContentValues();
+        contentValues.put(DBHelper.CLASS_ID,classs.getId());
+        contentValues.put(DBHelper.CLASS_SUBJECT,classs.getSubject());
+        contentValues.put(DBHelper.CLASS_BRANCH,classs.getBranch());
+        contentValues.put(DBHelper.CLASS_STREAM,classs.getStream());
+        contentValues.put(DBHelper.CLASS_SESSION,classs.getStream());
+        getWritableDatabase().insert(DBHelper.CLASS_TABLE_NAME,null,contentValues);
+    }
+    @SuppressLint("Range")
+    public ArrayList<Classs> getClasses() {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("SELECT * FROM " + CLASS_TABLE_NAME, null);
+        ArrayList<Classs> res=new ArrayList<>();
+
+        if(cursor.moveToFirst()) {
+            do {
+                res.add(new Classs(cursor.getInt(cursor.getColumnIndex(DBHelper.CLASS_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_SUBJECT)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_BRANCH)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_STREAM)),
+                        cursor.getInt(cursor.getColumnIndex(DBHelper.CLASS_SESSION))));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return res;
     }
     public void createTable(String tableName,String[] columnName) {
         String CREATE_TABLE= "CREATE TABLE " + CLASS_TABLE_NAME + " ("+columnName[0]+" TEXT,";
