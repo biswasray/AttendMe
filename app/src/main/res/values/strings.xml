@@ -17,4 +17,31 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="subjectname">Enter subject Name</string>
+    <string name="branch_title">Enter Branch</string>
+    <string name="stream_title">Enter Stream</string>
+    <string name="session_title">Choose Session</string>
+    <string-array name="streams">
+        <item>M.Tech</item>
+        <item>MCA</item>
+        <item>M.Sc</item>
+        <item>B.Tech</item>
+        <item>Diploma</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="branches">
+        <item>Computer Science</item>
+        <item>Mechanical</item>
+        <item>Civil</item>
+        <item>Electrical</item>
+        <item>Physics</item>
+        <item>Chemistry</item>
+        <item>Biology</item>
+        <item>Aerospace</item>
+        <item>Metallurgy</item>
+        <item>Electronic</item>
+        <item>Chemical</item>
+        <item>Information Technology</item>
+        <item>Other</item>
+    </string-array>
 </resources>

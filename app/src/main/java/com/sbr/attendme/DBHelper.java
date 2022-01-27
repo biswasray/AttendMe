@@ -105,7 +105,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBHelper.CLASS_SUBJECT,classs.getSubject());
         contentValues.put(DBHelper.CLASS_BRANCH,classs.getBranch());
         contentValues.put(DBHelper.CLASS_STREAM,classs.getStream());
-        contentValues.put(DBHelper.CLASS_SESSION,classs.getStream());
+        contentValues.put(DBHelper.CLASS_SESSION,classs.getSession());
         getWritableDatabase().insert(DBHelper.CLASS_TABLE_NAME,null,contentValues);
     }
     @SuppressLint("Range")

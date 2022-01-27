@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements CreateTeacher.Dis
         if(db.tableExists(DBHelper.TEACHER_TABLE_NAME)) {
             Intent intent = new Intent(this, ListOfClasses.class);
             startActivity(intent);
+            finish();
         }
         else if(db.tableExists(DBHelper.STUDENT_TABLE_NAME)) {
             Toast.makeText(this,"student exist",Toast.LENGTH_SHORT).show();
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements CreateTeacher.Dis
         if(i==0) {
             Intent intent = new Intent(this, ListOfClasses.class);
             startActivity(intent);
+            finish();
         }
     }
 
