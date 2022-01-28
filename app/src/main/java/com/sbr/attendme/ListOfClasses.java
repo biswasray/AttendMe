@@ -27,8 +27,8 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
     private AppBarConfiguration appBarConfiguration;
     private ActivityListOfClassesBinding binding;
     private ListView classlist;
-    private ArrayAdapter<String> adapter;
-    private ArrayList<String> arr;
+    private ClassListAdapter adapter;
+    private ArrayList<Classs> arr;
     private CreateClass cc;
     public static int classCount;
     @Override
@@ -49,23 +49,22 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
         });
         classlist=(ListView) findViewById(R.id.classlist);
         arr=new ArrayList<>();
+        adapter=new ClassListAdapter(this, android.R.layout.simple_list_item_1,arr);
         fetch();
-        adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,arr);
         classlist.setAdapter(adapter);
     }
     void fetch() {
         if(MainActivity.db.tableExists(DBHelper.CLASS_TABLE_NAME)) {
             arr.clear();
-            ArrayList<Classs> r=MainActivity.db.getClasses();
-            for(Classs c:r) {
-                arr.add(c.getId()+c.getBranch()+c.getSession());
+            for(Classs c:MainActivity.db.getClasses()) {
+                arr.add(c);
             }
-            classCount=r.size();
+            classCount=arr.size();
+            if(classCount!=0) {
+                findViewById(R.id.noitemfound).setVisibility(View.INVISIBLE);
+            }
         }
-        else {
-            arr.add("No class found yet");
-            classCount=0;
-        }
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -76,7 +75,6 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, int i) {
         fetch();
-        adapter.notifyDataSetChanged();
     }
 
     @Override
