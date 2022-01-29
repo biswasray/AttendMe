@@ -56,12 +56,12 @@ public class CreateClass extends DialogFragment{
                             return;
                         }
                         if(db.tableExists(DBHelper.CLASS_TABLE_NAME)) {
-                            Classs temp=new Classs(ListOfClasses.classCount,subject.getText().toString(),branch.getSelectedItem().toString(),stream.getSelectedItem().toString(),Integer.parseInt(session.getSelectedItem().toString()));
+                            Classs temp=new Classs(ListOfClasses.classCount,subject.getText().toString(),branch.getSelectedItem().toString(),stream.getSelectedItem().toString(),DBHelper.DATE_TABLE+ListOfClasses.classCount,Integer.parseInt(session.getSelectedItem().toString()));
                             db.insertClass(temp);
                         }
                         else {
                             db.createClass();
-                            Classs temp=new Classs(ListOfClasses.classCount,subject.getText().toString(),branch.getSelectedItem().toString(),stream.getSelectedItem().toString(),Integer.parseInt(session.getSelectedItem().toString()));
+                            Classs temp=new Classs(ListOfClasses.classCount,subject.getText().toString(),branch.getSelectedItem().toString(),stream.getSelectedItem().toString(),DBHelper.DATE_TABLE+ListOfClasses.classCount,Integer.parseInt(session.getSelectedItem().toString()));
                             db.insertClass(temp);
                         }
                         listener.onDialogPositiveClick(CreateClass.this,2);

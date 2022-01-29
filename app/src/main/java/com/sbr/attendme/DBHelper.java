@@ -30,7 +30,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String CLASS_BRANCH = "branch";
     public static final String CLASS_SUBJECT = "subject";
     public static final String CLASS_SESSION = "session";
+    public static final String CLASS_DATE_TABLE = "date_tables";
 
+    public static final String DATE_TABLE = "date_db";
+    public static final String DATE_DATA = "date";
+    public static final String DATE_STUDENT_ID = "student_id";
 
     private SQLiteDatabase sqLiteDatabase;
     public DBHelper(Context context) {
@@ -84,20 +88,23 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBHelper.STUDENT_ROLL_NO,roll);
         getWritableDatabase().insert(DBHelper.STUDENT_TABLE_NAME,null,contentValues);
     }
-    public void createClass() {
-        String CREATE_TABLE = "CREATE TABLE " + CLASS_TABLE_NAME + "("
-                + CLASS_ID + " INTEGER PRIMARY KEY," + CLASS_SUBJECT + " TEXT ," + CLASS_BRANCH + " TEXT ," + CLASS_STREAM + " TEXT ," +CLASS_SESSION+" INTEGER"+ ")";
+    public void createDateTable(String tableName) {
+        String CREATE_TABLE = "CREATE TABLE " + tableName + "("
+                + DATE_DATA + " TEXT," + DATE_STUDENT_ID + " TEXT ," + ")";
 
         getWritableDatabase().execSQL(CREATE_TABLE);
     }
-    public void insertClass(int id,String subject,String branch,String stream,int session) {
+    public void insertDate(String tableName,String date,String id){
         ContentValues contentValues=new ContentValues();
-        contentValues.put(DBHelper.CLASS_ID,id);
-        contentValues.put(DBHelper.CLASS_SUBJECT,subject);
-        contentValues.put(DBHelper.CLASS_BRANCH,branch);
-        contentValues.put(DBHelper.CLASS_STREAM,stream);
-        contentValues.put(DBHelper.CLASS_SESSION,session);
-        getWritableDatabase().insert(DBHelper.CLASS_TABLE_NAME,null,contentValues);
+        contentValues.put(DBHelper.DATE_DATA,date);
+        contentValues.put(DBHelper.DATE_STUDENT_ID,id);
+        getWritableDatabase().insert(tableName,null,contentValues);
+    }
+    public void createClass() {
+        String CREATE_TABLE = "CREATE TABLE " + CLASS_TABLE_NAME + "("
+                + CLASS_ID + " INTEGER PRIMARY KEY," + CLASS_SUBJECT + " TEXT ," + CLASS_BRANCH + " TEXT ," + CLASS_STREAM + " TEXT ," + CLASS_DATE_TABLE + " TEXT ," +CLASS_SESSION+" INTEGER"+ ")";
+
+        getWritableDatabase().execSQL(CREATE_TABLE);
     }
     public void insertClass(Classs classs) {
         ContentValues contentValues=new ContentValues();
@@ -105,6 +112,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBHelper.CLASS_SUBJECT,classs.getSubject());
         contentValues.put(DBHelper.CLASS_BRANCH,classs.getBranch());
         contentValues.put(DBHelper.CLASS_STREAM,classs.getStream());
+        contentValues.put(DBHelper.CLASS_DATE_TABLE,classs.getDateTable());
         contentValues.put(DBHelper.CLASS_SESSION,classs.getSession());
         getWritableDatabase().insert(DBHelper.CLASS_TABLE_NAME,null,contentValues);
     }
@@ -120,6 +128,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_SUBJECT)),
                         cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_BRANCH)),
                         cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_STREAM)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_TABLE_NAME)),
                         cursor.getInt(cursor.getColumnIndex(DBHelper.CLASS_SESSION))));
             }while (cursor.moveToNext());
         }

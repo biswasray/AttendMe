@@ -55,7 +55,6 @@ public class ClassListAdapter extends ArrayAdapter<Classs> {
         subtitleText.setText(classses.get(position).getStream()+" "+classses.get(position).getBranch()+" "+classses.get(position).getSession());
 
         return rowView;
-
     }
     private int pickColor(final String identifier) {
         if (TextUtils.isEmpty(identifier)) {

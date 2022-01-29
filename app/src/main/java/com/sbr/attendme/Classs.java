@@ -5,13 +5,15 @@ public class Classs {
     private String subject;
     private String branch;
     private String stream;
+    private String dateTable;
     private int session;
 
-    public Classs(int id, String subject, String branch, String stream, int session) {
+    public Classs(int id, String subject, String branch, String stream, String dateTable, int session) {
         this.id = id;
         this.subject = subject;
         this.branch = branch;
         this.stream = stream;
+        this.dateTable=dateTable;
         this.session = session;
     }
 
@@ -49,6 +51,14 @@ public class Classs {
 
     public int getSession() {
         return session;
+    }
+
+    public String getDateTable() {
+        return dateTable;
+    }
+
+    public void setDateTable(String dateTable) {
+        this.dateTable = dateTable;
     }
 
     public void setSession(int session) {
