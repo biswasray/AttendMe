@@ -6,8 +6,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 
@@ -75,6 +77,23 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBHelper.TEACHER_ID,id);
         getWritableDatabase().insert(DBHelper.TEACHER_TABLE_NAME,null,contentValues);
     }
+    @SuppressLint("Range")
+    public ArrayList<Teacher> getTeachers() {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("SELECT * FROM " + TEACHER_TABLE_NAME, null);
+        ArrayList<Teacher> res=new ArrayList<>();
+
+        if(cursor.moveToFirst()) {
+            do {
+                res.add(new Teacher(
+                        cursor.getString(cursor.getColumnIndex(DBHelper.TEACHER_NAME)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.TEACHER_ID))
+                ));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return res;
+    }
     public void createStudent() {
         String CREATE_TABLE = "CREATE TABLE " + STUDENT_TABLE_NAME + "("
                 + STUDENT_ID + " TEXT PRIMARY KEY," + STUDENT_NAME + " TEXT ," +STUDENT_ROLL_NO+" INTEGER"+ ")";
@@ -87,6 +106,24 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBHelper.STUDENT_ID,id);
         contentValues.put(DBHelper.STUDENT_ROLL_NO,roll);
         getWritableDatabase().insert(DBHelper.STUDENT_TABLE_NAME,null,contentValues);
+    }
+    @SuppressLint("Range")
+    public ArrayList<Student> getStudents() {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("SELECT * FROM " + STUDENT_TABLE_NAME, null);
+        ArrayList<Student> res=new ArrayList<>();
+
+        if(cursor.moveToFirst()) {
+            do {
+                res.add(new Student(
+                        cursor.getString(cursor.getColumnIndex(DBHelper.STUDENT_NAME)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.STUDENT_ID)),
+                        cursor.getInt(cursor.getColumnIndex(DBHelper.STUDENT_ROLL_NO))
+                ));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return res;
     }
     public void createDateTable(String tableName) {
         String CREATE_TABLE = "CREATE TABLE " + tableName + "("

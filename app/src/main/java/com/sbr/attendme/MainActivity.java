@@ -1,6 +1,7 @@
 package com.sbr.attendme;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
@@ -9,6 +10,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -16,10 +18,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements CreateTeacher.DismissListener,CreateStudent.DismissListener{
-    static DBHelper db;
-    CreateTeacher ct;
-    CreateStudent cs;
+    public static DBHelper db;
+    private CreateTeacher ct;
+    private CreateStudent cs;
     public static String MY_ID;
+    public static final int SERVER_PORT = 9081;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

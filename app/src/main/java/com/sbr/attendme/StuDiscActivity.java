@@ -16,16 +16,20 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class StuDiscActivity extends AppCompatActivity {
     private WifiManager manager;
     private WifiP2pManager p2pmanager;
+    private WifiP2pManager.Channel channel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stu_disc);
         manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         p2pmanager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        //channel = manager.initialize(this, getMainLooper(), null);
+        channel = p2pmanager.initialize(this, getMainLooper(), null);
         check();
     }
     public void check() {
@@ -58,5 +62,20 @@ public class StuDiscActivity extends AppCompatActivity {
 
     public void proceed() {
         Toast.makeText(this,"Searching for class",Toast.LENGTH_SHORT).show();
+        startRegistration();
+        discoverService();
+    }
+    private void startRegistration() {
+        Student student=MainActivity.db.getStudents().get(0);
+        Map record=new HashMap();
+        record.put("listenport",Integer.toString(MainActivity.SERVER_PORT));
+        record.put("appname",R.string.app_name);
+        record.put("type",R.string.student);
+        record.put("student",student.getName());
+        record.put("student_id",student.getId());
+
+    }
+    private void discoverService() {
+
     }
 }
