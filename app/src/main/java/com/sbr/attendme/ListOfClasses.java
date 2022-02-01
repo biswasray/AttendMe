@@ -1,6 +1,7 @@
 package com.sbr.attendme;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -52,6 +54,14 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
         adapter=new ClassListAdapter(this, android.R.layout.simple_list_item_1,arr);
         fetch();
         classlist.setAdapter(adapter);
+        classlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent=new Intent(ListOfClasses.this,TeaDiscActivity.class);
+                intent.putExtra("classs",arr.get(i));
+                startActivity(intent);
+            }
+        });
     }
     void fetch() {
         if(MainActivity.db.tableExists(DBHelper.CLASS_TABLE_NAME)) {

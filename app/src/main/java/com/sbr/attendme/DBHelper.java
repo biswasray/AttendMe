@@ -165,7 +165,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_SUBJECT)),
                         cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_BRANCH)),
                         cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_STREAM)),
-                        cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_TABLE_NAME)),
+                        cursor.getString(cursor.getColumnIndex(DBHelper.CLASS_DATE_TABLE)),
                         cursor.getInt(cursor.getColumnIndex(DBHelper.CLASS_SESSION))));
             }while (cursor.moveToNext());
         }

@@ -6,5 +6,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".TeaDiscActivity">
-
+    <com.skyfishjy.library.RippleBackground
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.3"
+        android:id="@+id/tea_ripple"
+        app:rb_radius="32dp"
+        app:rb_color="@color/teacher_search"
+        app:rb_rippleAmount="2"
+        app:rb_duration="3000"
+        app:rb_scale="6">
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:layout_centerInParent="true"
+            android:id="@+id/search_bud0" />
+    </com.skyfishjy.library.RippleBackground>
+    <ListView
+        android:id="@+id/tea_stu_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7"/>
 </LinearLayout>

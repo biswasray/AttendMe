@@ -1,12 +1,17 @@
 package com.sbr.attendme;
 
-public class Classs {
+import java.io.Serializable;
+
+public class Classs implements Serializable {
     private int id;
     private String subject;
     private String branch;
     private String stream;
     private String dateTable;
     private int session;
+
+    public Classs() {
+    }
 
     public Classs(int id, String subject, String branch, String stream, String dateTable, int session) {
         this.id = id;
