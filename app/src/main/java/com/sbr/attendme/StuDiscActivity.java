@@ -14,6 +14,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -119,6 +120,14 @@ public class StuDiscActivity extends AppCompatActivity {
 
             }
         });
+        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        p2pmanager.addServiceRequest(channel,serviceRequest,new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                //Toast.makeText(getApplicationContext(),"add service req ",Toast.LENGTH_SHORT).show();
+            }
+            @Override public void onFailure(int code) { }
+        });
     }
     private void discoverService() {
         WifiP2pManager.DnsSdTxtRecordListener txtRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
@@ -127,6 +136,7 @@ public class StuDiscActivity extends AppCompatActivity {
                 if(map.get("appname").equals(R.string.app_name)&&map.get("listenport").equals(Integer.toString(MainActivity.SERVER_PORT))&&map.get("type").equals(R.string.teacher)) {
                     teacherMap.put(wifiP2pDevice.deviceAddress,map);
                 }
+                Toast.makeText(StuDiscActivity.this,wifiP2pDevice.deviceName,Toast.LENGTH_SHORT).show();
             }
         };
         WifiP2pManager.DnsSdServiceResponseListener servListener = new WifiP2pManager.DnsSdServiceResponseListener() {
@@ -147,6 +157,17 @@ public class StuDiscActivity extends AppCompatActivity {
                 .textColor(Color.WHITE)
                 .endConfig().buildRound(""+student.getName().charAt(0), Color.BLACK));
         studentRipple.startRippleAnimation();
+        p2pmanager.discoverServices(channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int i) {
+
+            }
+        });
     }
 
     @Override
