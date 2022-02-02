@@ -3,10 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/drawable/lable.xml" value="0.6571428571428571" />
+        <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/drawable/search_list.xml" value="0.1953125" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/activity_list_of_classes.xml" value="0.16" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/activity_main.xml" value="0.18" />
-        <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/activity_stu_disc.xml" value="0.18" />
-        <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/activity_tea_disc.xml" value="0.1" />
+        <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/activity_stu_disc.xml" value="0.26126126126126126" />
+        <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/activity_tea_disc.xml" value="0.33" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/content_list_of_classes.xml" value="0.25" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/create_class.xml" value="0.18" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/create_student.xml" value="0.11639492753623189" />

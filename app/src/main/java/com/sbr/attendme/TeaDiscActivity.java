@@ -35,8 +35,9 @@ public class TeaDiscActivity extends AppCompatActivity {
     private WifiP2pManager.Channel channel;
     private RippleBackground teacherRipple;
     private ListView teaStuList;
-    private ArrayAdapter<String> adapter;
+    private DiscListAdapter adapter;
     private ArrayList<String> arr;
+    private ArrayList<String> arr1;
     private Classs classs;
     final HashMap<String, Map> studentMap = new HashMap<String, Map>();
     @Override
@@ -49,7 +50,8 @@ public class TeaDiscActivity extends AppCompatActivity {
         teacherRipple=(RippleBackground)findViewById(R.id.tea_ripple);
         teaStuList=(ListView)findViewById(R.id.tea_stu_list);
         arr=new ArrayList<>();
-        adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,arr);
+        arr1=new ArrayList<>();
+        adapter=new DiscListAdapter(this, android.R.layout.simple_list_item_1,arr,arr1);
         teaStuList.setAdapter(adapter);
         channel = p2pmanager.initialize(this, getMainLooper(), null);
         check();
@@ -91,8 +93,8 @@ public class TeaDiscActivity extends AppCompatActivity {
         Teacher teacher=MainActivity.db.getTeachers().get(0);
         Map<String,String> record=new HashMap();
         record.put("listenport",Integer.toString(MainActivity.SERVER_PORT));
-        record.put("appname",""+R.string.app_name);
-        record.put("type",""+R.string.teacher);
+        record.put("appname",""+getResources().getString(R.string.app_name));
+        record.put("type",""+getResources().getString(R.string.teacher));
         record.put("teacher",teacher.getName());
         record.put("class",classs.getSubject());
         WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", record);
@@ -120,10 +122,10 @@ public class TeaDiscActivity extends AppCompatActivity {
         WifiP2pManager.DnsSdTxtRecordListener txtRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
             public void onDnsSdTxtRecordAvailable(String s, Map<String, String> map, WifiP2pDevice wifiP2pDevice) {
-                if(map.get("appname").equals(R.string.app_name)&&map.get("listenport").equals(Integer.toString(MainActivity.SERVER_PORT))&&map.get("type").equals(R.string.student)) {
+                if(map.get("appname").equals(getResources().getString(R.string.app_name))&&map.get("listenport").equals(Integer.toString(MainActivity.SERVER_PORT))&&map.get("type").equals(getResources().getString(R.string.student))) {
                     studentMap.put(wifiP2pDevice.deviceAddress,map);
+                    Toast.makeText(TeaDiscActivity.this,map.toString(),Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(TeaDiscActivity.this,wifiP2pDevice.deviceName,Toast.LENGTH_SHORT).show();
             }
         };
         WifiP2pManager.DnsSdServiceResponseListener servListener = new WifiP2pManager.DnsSdServiceResponseListener() {
@@ -132,6 +134,7 @@ public class TeaDiscActivity extends AppCompatActivity {
             public void onDnsSdServiceAvailable(String s, String s1, WifiP2pDevice wifiP2pDevice) {
                 if(studentMap.containsKey(wifiP2pDevice.deviceAddress)) {
                     arr.add((String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student"));
+                    arr1.add((String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student_roll"));
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -160,6 +163,39 @@ public class TeaDiscActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        p2pmanager.clearLocalServices(channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int i) {
+
+            }
+        });
+        p2pmanager.clearServiceRequests(channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int i) {
+
+            }
+        });
+        p2pmanager.stopPeerDiscovery(channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int i) {
+
+            }
+        });
         if(teacherRipple.isRippleAnimationRunning())
             teacherRipple.stopRippleAnimation();
     }

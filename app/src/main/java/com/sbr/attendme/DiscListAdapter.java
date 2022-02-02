@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +18,18 @@ import com.amulyakhare.textdrawable.TextDrawable;
 
 import java.util.ArrayList;
 
-public class ClassListAdapter extends ArrayAdapter<Classs> {
+public class DiscListAdapter extends ArrayAdapter<String> {
     private final Activity context;
-    private final ArrayList<Classs> classses;
+    private final ArrayList<String> objects;
+    private final ArrayList<String> objects1;
     private TypedArray sColors;
     private static int sDefaultColor;
     private static int sTileFontColor;
-    public ClassListAdapter(@NonNull Context context, int resource, ArrayList<Classs> classses) {
-        super(context, resource,classses);
-        this.context= (Activity) context;
-        this.classses=classses;
+    public DiscListAdapter(@NonNull Activity context, int resource, ArrayList<String> objects,ArrayList<String> objects1) {
+        super(context, resource, objects);
+        this.context=context;
+        this.objects=objects;
+        this.objects1=objects1;
         if(sColors==null) {
             Resources res=context.getResources();
             sColors=res.obtainTypedArray(R.array.letter_tile_colors);
@@ -44,15 +45,15 @@ public class ClassListAdapter extends ArrayAdapter<Classs> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.classicon);
         TextView subtitleText = (TextView) rowView.findViewById(R.id.classsubtitle);
         //TextDrawable
-        titleText.setText(classses.get(position).getSubject());
+        titleText.setText(objects.get(position));
 
         imageView.setImageDrawable(TextDrawable.builder()
                 .beginConfig()
                 .bold()
                 .toUpperCase()
                 .endConfig()
-                .buildRound(""+classses.get(position).getSubject().charAt(0),pickColor(classses.get(position).getSubject())));
-        subtitleText.setText(classses.get(position).getStream()+" "+classses.get(position).getBranch()+" "+classses.get(position).getSession());
+                .buildRound(""+objects.get(position).charAt(0),pickColor(objects.get(position))));
+        subtitleText.setText(objects1.get(position));
 
         return rowView;
     }
