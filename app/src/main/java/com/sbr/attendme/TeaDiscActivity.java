@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,8 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -25,11 +28,13 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.skyfishjy.library.RippleBackground;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TeaDiscActivity extends AppCompatActivity {
+public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private WifiManager manager;
     private WifiP2pManager p2pmanager;
     private WifiP2pManager.Channel channel;
@@ -39,11 +44,15 @@ public class TeaDiscActivity extends AppCompatActivity {
     private ArrayList<String> arr;
     private ArrayList<String> arr1;
     private Classs classs;
+    private SwipeRefreshLayout layout;
     final HashMap<String, Map> studentMap = new HashMap<String, Map>();
+    private String dateData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tea_disc);
+        layout=(SwipeRefreshLayout)findViewById(R.id.swipeTea);
+        layout.setOnRefreshListener(this);
         classs= (Classs) getIntent().getSerializableExtra("classs");
         manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         p2pmanager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
@@ -53,6 +62,12 @@ public class TeaDiscActivity extends AppCompatActivity {
         arr1=new ArrayList<>();
         adapter=new DiscListAdapter(this, android.R.layout.simple_list_item_1,arr,arr1);
         teaStuList.setAdapter(adapter);
+        teaStuList.post(new Runnable() {
+            @Override
+            public void run() {
+                teaStuList.smoothScrollToPosition(0);
+            }
+        });
         channel = p2pmanager.initialize(this, getMainLooper(), null);
         check();
     }
@@ -86,6 +101,8 @@ public class TeaDiscActivity extends AppCompatActivity {
 
     public void proceed() {
         Toast.makeText(this,"Searching for students",Toast.LENGTH_SHORT).show();
+        dateData= DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+        if(MainActivity.db.tableExists(classs.getDateTable()))
         startRegistration();
         discoverService();
     }
@@ -96,6 +113,7 @@ public class TeaDiscActivity extends AppCompatActivity {
         record.put("appname",""+getResources().getString(R.string.app_name));
         record.put("type",""+getResources().getString(R.string.teacher));
         record.put("teacher",teacher.getName());
+        record.put("time",dateData);
         record.put("class",classs.getSubject());
         WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", record);
         p2pmanager.addLocalService(channel, serviceInfo, new WifiP2pManager.ActionListener() {
@@ -123,8 +141,10 @@ public class TeaDiscActivity extends AppCompatActivity {
             @Override
             public void onDnsSdTxtRecordAvailable(String s, Map<String, String> map, WifiP2pDevice wifiP2pDevice) {
                 if(map.get("appname").equals(getResources().getString(R.string.app_name))&&map.get("listenport").equals(Integer.toString(MainActivity.SERVER_PORT))&&map.get("type").equals(getResources().getString(R.string.student))) {
-                    studentMap.put(wifiP2pDevice.deviceAddress,map);
-                    Toast.makeText(TeaDiscActivity.this,map.toString(),Toast.LENGTH_SHORT).show();
+                    if(!studentMap.containsKey(wifiP2pDevice.deviceAddress)) {
+                        studentMap.put(wifiP2pDevice.deviceAddress,map);
+
+                    }
                 }
             }
         };
@@ -133,8 +153,8 @@ public class TeaDiscActivity extends AppCompatActivity {
             @Override
             public void onDnsSdServiceAvailable(String s, String s1, WifiP2pDevice wifiP2pDevice) {
                 if(studentMap.containsKey(wifiP2pDevice.deviceAddress)) {
-                    arr.add((String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student"));
-                    arr1.add((String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student_roll"));
+                    arr.add(0,(String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student"));
+                    arr1.add(0,(String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student_roll"));
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -198,5 +218,32 @@ public class TeaDiscActivity extends AppCompatActivity {
         });
         if(teacherRipple.isRippleAnimationRunning())
             teacherRipple.stopRippleAnimation();
+    }
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            finish();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
+
+    @Override
+    public void onRefresh() {
+        this.onPause();
+        this.onResume();
     }
 }

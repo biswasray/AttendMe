@@ -1,58 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
+    android:id="@+id/swipeStu"
     tools:context=".StuDiscActivity">
-    <com.skyfishjy.library.RippleBackground
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.3"
-        android:id="@+id/stu_ripple"
-        app:rb_radius="32dp"
-        app:rb_color="@color/student_search"
-        app:rb_rippleAmount="4"
-        app:rb_duration="3000"
-        app:rb_scale="6">
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_launcher_foreground"
-            android:layout_centerInParent="true"
-            android:id="@+id/search_bud1" />
-    </com.skyfishjy.library.RippleBackground>
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="-8dp"
-        app:cardElevation="10dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardMaxElevation="12dp"
-        app:cardCornerRadius="20dp"
-        android:layout_weight="0.7">
-        <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center">
+        <com.skyfishjy.library.RippleBackground
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TextView
+            android:layout_weight="0.3"
+            android:id="@+id/stu_ripple"
+            app:rb_radius="32dp"
+            app:rb_color="@color/student_search"
+            app:rb_rippleAmount="4"
+            app:rb_duration="3000"
+            app:rb_scale="6">
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_launcher_foreground"
+                android:layout_centerInParent="true"
+                android:id="@+id/search_bud1" />
+        </com.skyfishjy.library.RippleBackground>
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="-8dp"
+            app:cardElevation="10dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardMaxElevation="12dp"
+            app:cardCornerRadius="20dp"
+            android:layout_weight="0.7">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16dp"
-                android:text="Classes Available"
-                android:textColor="@color/white"
-                android:background="@color/purple_500"
-                android:textAlignment="center"
-                android:padding="6dp"/>
-            <ListView
-                android:id="@+id/stu_tea_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:text="Classes Available"
+                    android:textColor="@color/white"
+                    android:background="@color/purple_500"
+                    android:textAlignment="center"
+                    android:padding="6dp"/>
+                <ListView
+                    android:id="@+id/stu_tea_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
-</LinearLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

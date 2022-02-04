@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +18,8 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -31,7 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StuDiscActivity extends AppCompatActivity {
+public class StuDiscActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private WifiManager manager;
     private WifiP2pManager p2pmanager;
     private WifiP2pManager.Channel channel;
@@ -41,11 +44,14 @@ public class StuDiscActivity extends AppCompatActivity {
     private ArrayList<String> arr;
     private ArrayList<String> arr1;
     private Student student;
+    private SwipeRefreshLayout layout;
     final HashMap<String,Map> teacherMap=new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stu_disc);
+        layout=(SwipeRefreshLayout)findViewById(R.id.swipeStu);
+        layout.setOnRefreshListener(this);
         manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         p2pmanager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         studentRipple =(RippleBackground) findViewById(R.id.stu_ripple);
@@ -54,6 +60,12 @@ public class StuDiscActivity extends AppCompatActivity {
         arr1=new ArrayList<>();
         adapter=new DiscListAdapter(this, android.R.layout.simple_list_item_1,arr,arr1);
         stuTeaList.setAdapter(adapter);
+        stuTeaList.post(new Runnable() {
+            @Override
+            public void run() {
+                stuTeaList.smoothScrollToPosition(0);
+            }
+        });
         channel = p2pmanager.initialize(this, getMainLooper(), null);
         check();
     }
@@ -146,8 +158,8 @@ public class StuDiscActivity extends AppCompatActivity {
             @Override
             public void onDnsSdServiceAvailable(String s, String s1, WifiP2pDevice wifiP2pDevice) {
                 if(teacherMap.containsKey(wifiP2pDevice.deviceAddress)) {
-                    arr.add((String) ((Map)teacherMap.get(wifiP2pDevice.deviceAddress)).get("class"));
-                    arr1.add((String) ((Map)teacherMap.get(wifiP2pDevice.deviceAddress)).get("teacher"));
+                    arr.add(0,(String) ((Map)teacherMap.get(wifiP2pDevice.deviceAddress)).get("class"));
+                    arr1.add(0,(String) ((Map)teacherMap.get(wifiP2pDevice.deviceAddress)).get("teacher"));
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -211,5 +223,32 @@ public class StuDiscActivity extends AppCompatActivity {
         });
         if(studentRipple.isRippleAnimationRunning())
             studentRipple.stopRippleAnimation();
+    }
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            finish();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
+
+    @Override
+    public void onRefresh() {
+        this.onPause();
+        this.onResume();
     }
 }
