@@ -7,6 +7,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,7 +22,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Process;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -34,7 +40,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener,Runnable {
     private WifiManager manager;
     private WifiP2pManager p2pmanager;
     private WifiP2pManager.Channel channel;
@@ -45,6 +51,14 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
     private ArrayList<String> arr1;
     private Classs classs;
     private SwipeRefreshLayout layout;
+    private boolean isAnimationRunning=false;
+    private Thread animation;
+    private ImageView[] findStud=new ImageView[3];
+    private int[] fs={R.id.stud0,R.id.stud1,R.id.stud2};
+    private static int index;
+    private ArrayList<String> animList=new ArrayList<>();
+    private float screenWidth,screenHeight;
+    private ColorPicker colorPicker;
     final HashMap<String, Map> studentMap = new HashMap<String, Map>();
     private String dateData;
     @Override
@@ -57,6 +71,11 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
         manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         p2pmanager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         teacherRipple=(RippleBackground)findViewById(R.id.tea_ripple);
+        colorPicker=new ColorPicker(this.getApplicationContext());
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        screenWidth = displaymetrics.widthPixels;
+        screenHeight = displaymetrics.heightPixels;
         teaStuList=(ListView)findViewById(R.id.tea_stu_list);
         arr=new ArrayList<>();
         arr1=new ArrayList<>();
@@ -68,6 +87,9 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
                 teaStuList.smoothScrollToPosition(0);
             }
         });
+        animation=new Thread(this);
+        for(int j=0;j<3;j++)
+            findStud[j]=(ImageView)findViewById(fs[j]);
         channel = p2pmanager.initialize(this, getMainLooper(), null);
         check();
     }
@@ -76,7 +98,7 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
             proceed();
         }
         else {
-            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q) {
+            /*if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q) {
                 Toast.makeText(this,"Please turn on WiFi",Toast.LENGTH_SHORT).show();
                 Intent panel=new Intent(Settings.Panel.ACTION_WIFI);
                 //startActivityForResult(panel,1);
@@ -84,6 +106,13 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
             }
             else {
                 manager.setWifiEnabled(true);
+            }*/
+            manager.setWifiEnabled(true);
+            if(manager.isWifiEnabled())
+                proceed();
+            else {
+                Toast.makeText(this,"Please turn on WiFi",Toast.LENGTH_SHORT).show();
+                wifiOpener.launch(new Intent(Settings.ACTION_WIFI_SETTINGS));
             }
         }
     }
@@ -102,7 +131,9 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
     public void proceed() {
         Toast.makeText(this,"Searching for students",Toast.LENGTH_SHORT).show();
         dateData= DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
-        if(MainActivity.db.tableExists(classs.getDateTable()))
+        if(!MainActivity.db.tableExists(classs.getDateTable())) {
+            MainActivity.db.createDateTable(classs.getDateTable());
+        }
         startRegistration();
         discoverService();
     }
@@ -137,13 +168,20 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
         });
     }
     private void discoverService() {
+        isAnimationRunning=true;
+        animation.start();
         WifiP2pManager.DnsSdTxtRecordListener txtRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
             public void onDnsSdTxtRecordAvailable(String s, Map<String, String> map, WifiP2pDevice wifiP2pDevice) {
                 if(map.get("appname").equals(getResources().getString(R.string.app_name))&&map.get("listenport").equals(Integer.toString(MainActivity.SERVER_PORT))&&map.get("type").equals(getResources().getString(R.string.student))) {
                     if(!studentMap.containsKey(wifiP2pDevice.deviceAddress)) {
                         studentMap.put(wifiP2pDevice.deviceAddress,map);
+                        MainActivity.db.insertDate(classs.getDateTable(),dateData,map.get("student_id"));
+                        try {
+                            MainActivity.db.insertStudent(map.get("student"),map.get("student_id"),Integer.parseInt(map.get("student_roll")));
+                        }catch (Exception ex) {
 
+                        }
                     }
                 }
             }
@@ -155,7 +193,8 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
                 if(studentMap.containsKey(wifiP2pDevice.deviceAddress)) {
                     arr.add(0,(String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student"));
                     arr1.add(0,(String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student_roll"));
-                    adapter.notifyDataSetChanged();
+                    animList.add((String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student"));
+                    //adapter.notifyDataSetChanged();
                 }
             }
         };
@@ -183,6 +222,8 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isAnimationRunning=false;
+        index=0;
         p2pmanager.clearLocalServices(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -225,6 +266,8 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
+            isAnimationRunning=false;
+            index=0;
             finish();
             return;
         }
@@ -245,5 +288,72 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
     public void onRefresh() {
         this.onPause();
         this.onResume();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                layout.setRefreshing(false);
+            }
+        }, 2000);
+    }
+
+    @Override
+    public void run() {
+        while (isAnimationRunning) {
+            if(index< animList.size()) {
+                runOnUiThread(()-> {
+                    fun();
+                });
+            }
+            try {
+                Thread.sleep(500);
+            }
+            catch (Exception ex) {
+                System.out.println(ex);
+            }
+        }
+    }
+    public void fun() {
+        AnimatorSet appear=new AnimatorSet();
+        ObjectAnimator scaleX=ObjectAnimator.ofFloat(findStud[index%3],"ScaleX",0f,1.2f,1f);
+        ObjectAnimator scaleY=ObjectAnimator.ofFloat(findStud[index%3],"ScaleY",0f,1.2f,1f);
+        appear.play(scaleX).with(scaleY);
+        appear.setDuration(300);
+        AnimatorSet move=new AnimatorSet();
+        ObjectAnimator a1=ObjectAnimator.ofFloat(findStud[index%3],"translationX",(screenWidth/2));
+        ObjectAnimator a2=ObjectAnimator.ofFloat(findStud[index%3],"translationY",screenHeight);
+        move.play(a1).with(a2).after(500);
+        move.setDuration(700);
+        AnimatorSet total=new AnimatorSet();
+        total.play(appear).before(move);
+        findStud[index%3].setImageDrawable(TextDrawable.builder()
+                .beginConfig()
+                .bold()
+                .toUpperCase()
+                .textColor(Color.WHITE)
+                .endConfig().buildRound(""+animList.get(index).charAt(0), colorPicker.pickColor(animList.get(index))));
+        findStud[index%3].setVisibility(View.VISIBLE);
+        total.start();
+        total.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        index++;
     }
 }

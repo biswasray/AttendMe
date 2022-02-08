@@ -22,19 +22,12 @@ import java.util.ArrayList;
 public class ClassListAdapter extends ArrayAdapter<Classs> {
     private final Activity context;
     private final ArrayList<Classs> classses;
-    private TypedArray sColors;
-    private static int sDefaultColor;
-    private static int sTileFontColor;
+    private ColorPicker colorPicker;
     public ClassListAdapter(@NonNull Context context, int resource, ArrayList<Classs> classses) {
         super(context, resource,classses);
         this.context= (Activity) context;
         this.classses=classses;
-        if(sColors==null) {
-            Resources res=context.getResources();
-            sColors=res.obtainTypedArray(R.array.letter_tile_colors);
-            sDefaultColor=res.getColor(R.color.letter_tile_default_color);
-            sTileFontColor=res.getColor(R.color.letter_tile_font_color);
-        }
+        colorPicker=new ColorPicker(context);
     }
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater=context.getLayoutInflater();
@@ -51,16 +44,9 @@ public class ClassListAdapter extends ArrayAdapter<Classs> {
                 .bold()
                 .toUpperCase()
                 .endConfig()
-                .buildRound(""+classses.get(position).getSubject().charAt(0),pickColor(classses.get(position).getSubject())));
+                .buildRound(""+classses.get(position).getSubject().charAt(0),colorPicker.pickColor(classses.get(position).getSubject())));
         subtitleText.setText(classses.get(position).getStream()+" "+classses.get(position).getBranch()+" "+classses.get(position).getSession());
 
         return rowView;
-    }
-    private int pickColor(final String identifier) {
-        if (TextUtils.isEmpty(identifier)) {
-            return sDefaultColor;
-        }
-        final int color = Math.abs(identifier.hashCode()) % sColors.length();
-        return sColors.getColor(color, sDefaultColor);
     }
 }

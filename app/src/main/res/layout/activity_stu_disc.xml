@@ -21,12 +21,46 @@
             app:rb_rippleAmount="4"
             app:rb_duration="3000"
             app:rb_scale="6">
+
             <ImageView
+                android:id="@+id/search_bud1"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/ic_launcher_foreground"
                 android:layout_centerInParent="true"
-                android:id="@+id/search_bud1" />
+                android:src="@drawable/ic_launcher_foreground" />
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/teach0"
+                android:layout_above="@id/search_bud1"
+                android:layout_marginBottom="32dp"
+                android:layout_toLeftOf="@id/search_bud1"
+                android:layout_marginRight="6dp"
+                android:visibility="invisible"
+                android:src="@drawable/ic_launcher_background"
+                />
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/teach1"
+                android:layout_above="@id/search_bud1"
+                android:layout_marginBottom="46dp"
+                android:layout_toRightOf="@id/search_bud1"
+                android:layout_marginRight="10dp"
+                android:visibility="invisible"
+                android:src="@drawable/ic_launcher_background"
+                />
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/teach2"
+                android:layout_below="@id/search_bud1"
+                android:layout_marginTop="46dp"
+                android:layout_toLeftOf="@id/search_bud1"
+                android:layout_marginRight="-22dp"
+                android:visibility="invisible"
+                android:src="@drawable/ic_launcher_background"
+                />
         </com.skyfishjy.library.RippleBackground>
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

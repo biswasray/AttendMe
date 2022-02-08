@@ -44,6 +44,8 @@ public class DiscListAdapter extends ArrayAdapter<String> {
         TextView titleText = (TextView) rowView.findViewById(R.id.classtitle);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.classicon);
         TextView subtitleText = (TextView) rowView.findViewById(R.id.classsubtitle);
+        ImageView popView=(ImageView) rowView.findViewById(R.id.popview);
+        popView.setVisibility(View.INVISIBLE);
         //TextDrawable
         titleText.setText(objects.get(position));
 

@@ -26,6 +26,39 @@
                 android:src="@drawable/ic_launcher_foreground"
                 android:layout_centerInParent="true"
                 android:id="@+id/search_bud0" />
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/stud0"
+                android:layout_above="@id/search_bud0"
+                android:layout_marginBottom="32dp"
+                android:layout_toLeftOf="@id/search_bud0"
+                android:layout_marginRight="6dp"
+                android:visibility="invisible"
+                android:src="@drawable/ic_launcher_background"
+                />
+
+            <ImageView
+                android:id="@+id/stud1"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_above="@id/search_bud0"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="46dp"
+                android:layout_toRightOf="@id/search_bud0"
+                android:src="@drawable/ic_launcher_background"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@+id/stud2"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_below="@id/search_bud0"
+                android:layout_marginTop="46dp"
+                android:layout_marginRight="-22dp"
+                android:layout_toLeftOf="@id/search_bud0"
+                android:src="@drawable/ic_launcher_background"
+                android:visibility="invisible" />
         </com.skyfishjy.library.RippleBackground>
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

@@ -127,7 +127,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     public void createDateTable(String tableName) {
         String CREATE_TABLE = "CREATE TABLE " + tableName + "("
-                + DATE_DATA + " TEXT," + DATE_STUDENT_ID + " TEXT ," + ")";
+                + DATE_DATA + " TEXT," + DATE_STUDENT_ID + " TEXT " + ")";
 
         getWritableDatabase().execSQL(CREATE_TABLE);
     }
