@@ -2,6 +2,7 @@ package com.sbr.attendme;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -30,7 +31,8 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
     private ActivityListOfClassesBinding binding;
     private ListView classlist;
     private ClassListAdapter adapter;
-    private ArrayList<Classs> arr;
+    private ArrayList<Classs> arr,selectedItems;
+    private boolean isLongPressed=false;
     private CreateClass cc;
     public static int classCount;
     @Override
@@ -51,15 +53,49 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
         });
         classlist=(ListView) findViewById(R.id.classlist);
         arr=new ArrayList<>();
-        adapter=new ClassListAdapter(this, android.R.layout.simple_list_item_1,arr);
+        selectedItems=new ArrayList<>();
+        adapter=new ClassListAdapter(this, android.R.layout.simple_list_item_multiple_choice,arr);
+        classlist.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        classlist.setItemsCanFocus(false);
         fetch();
         classlist.setAdapter(adapter);
+        classlist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                isLongPressed=true;
+                if(selectedItems.contains(arr.get(i))) {
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                    selectedItems.remove(arr.get(i));
+                }
+                else {
+                    view.setBackgroundResource(R.color.selectedcolor);
+                    selectedItems.add(arr.get(i));
+                }
+                if(selectedItems.size()==0)
+                    isLongPressed=false;
+                return true;
+            }
+        });
         classlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent=new Intent(ListOfClasses.this,TeaDiscActivity.class);
-                intent.putExtra("classs",arr.get(i));
-                startActivity(intent);
+                if(isLongPressed) {
+                    if(selectedItems.contains(arr.get(i))) {
+                        view.setBackgroundColor(Color.TRANSPARENT);
+                        selectedItems.remove(arr.get(i));
+                    }
+                    else {
+                        view.setBackgroundResource(R.color.selectedcolor);
+                        selectedItems.add(arr.get(i));
+                    }
+                    if(selectedItems.size()==0)
+                        isLongPressed=false;
+                }
+                else {
+                    Intent intent=new Intent(ListOfClasses.this,TeaDiscActivity.class);
+                    intent.putExtra("classs",arr.get(i));
+                    startActivity(intent);
+                }
             }
         });
     }

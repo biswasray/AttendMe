@@ -89,7 +89,6 @@ public class StuDiscActivity extends AppCompatActivity implements SwipeRefreshLa
                 stuTeaList.smoothScrollToPosition(0);
             }
         });
-        animation=new Thread(this);
         for(int j=0;j<3;j++)
             findTeach[j]=(ImageView)findViewById(ft[j]);
         channel = p2pmanager.initialize(this, getMainLooper(), null);
@@ -178,6 +177,7 @@ public class StuDiscActivity extends AppCompatActivity implements SwipeRefreshLa
     }
     private void discoverService() {
         isAnimationRunning=true;
+        animation=new Thread(this);
         animation.start();
         WifiP2pManager.DnsSdTxtRecordListener txtRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
@@ -192,7 +192,7 @@ public class StuDiscActivity extends AppCompatActivity implements SwipeRefreshLa
 
             @Override
             public void onDnsSdServiceAvailable(String s, String s1, WifiP2pDevice wifiP2pDevice) {
-                if(teacherMap.containsKey(wifiP2pDevice.deviceAddress)) {
+                if(teacherMap.containsKey(wifiP2pDevice.deviceAddress)&&!animList.contains((String) ((Map)teacherMap.get(wifiP2pDevice.deviceAddress)).get("class"))) {
                     arr.add(0,(String) ((Map)teacherMap.get(wifiP2pDevice.deviceAddress)).get("class"));
                     arr1.add(0,(String) ((Map)teacherMap.get(wifiP2pDevice.deviceAddress)).get("teacher"));
                     animList.add((String) ((Map)teacherMap.get(wifiP2pDevice.deviceAddress)).get("class"));
@@ -221,11 +221,8 @@ public class StuDiscActivity extends AppCompatActivity implements SwipeRefreshLa
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    private void stopServices() {
         isAnimationRunning=false;
-        index=0;
         p2pmanager.clearLocalServices(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -262,6 +259,13 @@ public class StuDiscActivity extends AppCompatActivity implements SwipeRefreshLa
         if(studentRipple.isRippleAnimationRunning())
             studentRipple.stopRippleAnimation();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        index=0;
+        stopServices();
+    }
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
@@ -288,8 +292,8 @@ public class StuDiscActivity extends AppCompatActivity implements SwipeRefreshLa
 
     @Override
     public void onRefresh() {
-        this.onPause();
-        this.onResume();
+        stopServices();
+        check();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -343,6 +347,9 @@ public class StuDiscActivity extends AppCompatActivity implements SwipeRefreshLa
             @Override
             public void onAnimationEnd(Animator animator) {
                 adapter.notifyDataSetChanged();
+                findTeach[index%3].setVisibility(View.INVISIBLE);
+                findTeach[index%3].animate().translationY(0).setDuration(0).start();
+                findTeach[index%3].animate().translationX(0).setDuration(0).start();
             }
 
             @Override

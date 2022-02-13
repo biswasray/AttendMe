@@ -87,10 +87,10 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
                 teaStuList.smoothScrollToPosition(0);
             }
         });
-        animation=new Thread(this);
         for(int j=0;j<3;j++)
             findStud[j]=(ImageView)findViewById(fs[j]);
         channel = p2pmanager.initialize(this, getMainLooper(), null);
+        dateData= DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
         check();
     }
     public void check() {
@@ -130,7 +130,6 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
 
     public void proceed() {
         Toast.makeText(this,"Searching for students",Toast.LENGTH_SHORT).show();
-        dateData= DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
         if(!MainActivity.db.tableExists(classs.getDateTable())) {
             MainActivity.db.createDateTable(classs.getDateTable());
         }
@@ -169,6 +168,7 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
     }
     private void discoverService() {
         isAnimationRunning=true;
+        animation=new Thread(this);
         animation.start();
         WifiP2pManager.DnsSdTxtRecordListener txtRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
@@ -178,7 +178,13 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
                         studentMap.put(wifiP2pDevice.deviceAddress,map);
                         MainActivity.db.insertDate(classs.getDateTable(),dateData,map.get("student_id"));
                         try {
-                            MainActivity.db.insertStudent(map.get("student"),map.get("student_id"),Integer.parseInt(map.get("student_roll")));
+                            if(MainActivity.db.tableExists(DBHelper.STUDENT_TABLE_NAME))
+                                if(!MainActivity.db.studentExists(map.get("student_id")))
+                                    MainActivity.db.insertStudent(map.get("student"),map.get("student_id"),Integer.parseInt(map.get("student_roll")));
+                            else {
+                                MainActivity.db.createStudent();
+                                MainActivity.db.insertStudent(map.get("student"),map.get("student_id"),Integer.parseInt(map.get("student_roll")));
+                            }
                         }catch (Exception ex) {
 
                         }
@@ -190,7 +196,7 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
 
             @Override
             public void onDnsSdServiceAvailable(String s, String s1, WifiP2pDevice wifiP2pDevice) {
-                if(studentMap.containsKey(wifiP2pDevice.deviceAddress)) {
+                if(studentMap.containsKey(wifiP2pDevice.deviceAddress)&&!animList.contains((String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student"))) {
                     arr.add(0,(String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student"));
                     arr1.add(0,(String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student_roll"));
                     animList.add((String) ((Map)studentMap.get(wifiP2pDevice.deviceAddress)).get("student"));
@@ -219,11 +225,9 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    private void stopServices() {
+        //index=0;
         isAnimationRunning=false;
-        index=0;
         p2pmanager.clearLocalServices(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -260,14 +264,21 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
         if(teacherRipple.isRippleAnimationRunning())
             teacherRipple.stopRippleAnimation();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        index=0;
+        stopServices();
+    }
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
-            isAnimationRunning=false;
             index=0;
+            isAnimationRunning=false;
             finish();
             return;
         }
@@ -286,8 +297,8 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
 
     @Override
     public void onRefresh() {
-        this.onPause();
-        this.onResume();
+        stopServices();
+        check();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -313,6 +324,9 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
         }
     }
     public void fun() {
+        if(index>=animList.size())
+            return;
+        System.out.println(index%3);
         AnimatorSet appear=new AnimatorSet();
         ObjectAnimator scaleX=ObjectAnimator.ofFloat(findStud[index%3],"ScaleX",0f,1.2f,1f);
         ObjectAnimator scaleY=ObjectAnimator.ofFloat(findStud[index%3],"ScaleY",0f,1.2f,1f);
@@ -342,6 +356,9 @@ public class TeaDiscActivity extends AppCompatActivity implements SwipeRefreshLa
             @Override
             public void onAnimationEnd(Animator animator) {
                 adapter.notifyDataSetChanged();
+                findStud[index%3].setVisibility(View.INVISIBLE);
+                findStud[index%3].animate().translationY(0).setDuration(0).start();
+                findStud[index%3].animate().translationX(0).setDuration(0).start();
             }
 
             @Override
