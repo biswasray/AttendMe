@@ -10,10 +10,13 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toolbar;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.navigation.NavController;
@@ -35,10 +38,10 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
     private boolean isLongPressed=false;
     private CreateClass cc;
     public static int classCount;
+    private MenuItem deleteMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityListOfClassesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
@@ -71,8 +74,10 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
                     view.setBackgroundResource(R.color.selectedcolor);
                     selectedItems.add(arr.get(i));
                 }
-                if(selectedItems.size()==0)
-                    isLongPressed=false;
+                if(selectedItems.size()==0) {
+                    isLongPressed = false;
+                }
+                deleteMenu.setVisible(isLongPressed);
                 return true;
             }
         });
@@ -88,8 +93,10 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
                         view.setBackgroundResource(R.color.selectedcolor);
                         selectedItems.add(arr.get(i));
                     }
-                    if(selectedItems.size()==0)
-                        isLongPressed=false;
+                    if(selectedItems.size()==0) {
+                        isLongPressed = false;
+                    }
+                    deleteMenu.setVisible(isLongPressed);
                 }
                 else {
                     Intent intent=new Intent(ListOfClasses.this,TeaDiscActivity.class);
@@ -99,6 +106,25 @@ public class ListOfClasses extends AppCompatActivity implements CreateClass.Dism
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.delete_menu,menu);
+        deleteMenu=menu.getItem(0);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        for(Classs c:selectedItems) {
+            MainActivity.db.dropTable(c.getDateTable());
+            MainActivity.db.deleteClass(c);
+            arr.remove(c);
+        }
+        adapter.notifyDataSetChanged();
+        return super.onOptionsItemSelected(item);
+    }
+
     void fetch() {
         if(MainActivity.db.tableExists(DBHelper.CLASS_TABLE_NAME)) {
             arr.clear();

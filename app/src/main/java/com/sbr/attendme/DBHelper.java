@@ -83,10 +83,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     @SuppressLint("Range")
     public ArrayList<Teacher> getTeachers() {
+        ArrayList<Teacher> res=new ArrayList<>();
+        if(!tableExists(DBHelper.TEACHER_TABLE_NAME))
+            return res;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("SELECT * FROM " + TEACHER_TABLE_NAME, null);
-        ArrayList<Teacher> res=new ArrayList<>();
-
         if(cursor.moveToFirst()) {
             do {
                 res.add(new Teacher(
@@ -125,10 +126,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     @SuppressLint("Range")
     public ArrayList<Student> getStudents() {
+        ArrayList<Student> res=new ArrayList<>();
+        if(!tableExists(DBHelper.STUDENT_TABLE_NAME))
+            return res;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("SELECT * FROM " + STUDENT_TABLE_NAME, null);
-        ArrayList<Student> res=new ArrayList<>();
-
         if(cursor.moveToFirst()) {
             do {
                 res.add(new Student(
@@ -155,10 +157,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     @SuppressLint("Range")
     public ArrayList<DateData> getDates(String tableName) {
+        ArrayList<DateData> res=new ArrayList<>();
+        if(!tableExists(tableName))
+            return res;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("SELECT * FROM " + tableName, null);
-        ArrayList<DateData> res=new ArrayList<>();
-
         if(cursor.moveToFirst()) {
             do {
                 res.add(new DateData(
@@ -172,10 +175,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     @SuppressLint("Range")
     public ArrayList<DateData> getDates(String tableName,String date) {
+        ArrayList<DateData> res=new ArrayList<>();
+        if(!tableExists(tableName))
+            return res;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("SELECT * FROM " + tableName + " WHERE "+DBHelper.DATE_DATA + " = \""+date+"\"", null);
-        ArrayList<DateData> res=new ArrayList<>();
-
         if(cursor.moveToFirst()) {
             do {
                 res.add(new DateData(
@@ -203,12 +207,17 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(DBHelper.CLASS_SESSION,classs.getSession());
         getWritableDatabase().insert(DBHelper.CLASS_TABLE_NAME,null,contentValues);
     }
+    public void deleteClass(Classs classs) {
+        String DELETE_TABLE = "DELETE FROM " + CLASS_TABLE_NAME + " WHERE "+DBHelper.CLASS_ID+" = "+classs.getId();
+        getWritableDatabase().execSQL(DELETE_TABLE);
+    }
     @SuppressLint("Range")
     public ArrayList<Classs> getClasses() {
+        ArrayList<Classs> res=new ArrayList<>();
+        if(!tableExists(DBHelper.CLASS_TABLE_NAME))
+            return res;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("SELECT * FROM " + CLASS_TABLE_NAME, null);
-        ArrayList<Classs> res=new ArrayList<>();
-
         if(cursor.moveToFirst()) {
             do {
                 res.add(new Classs(cursor.getInt(cursor.getColumnIndex(DBHelper.CLASS_ID)),
