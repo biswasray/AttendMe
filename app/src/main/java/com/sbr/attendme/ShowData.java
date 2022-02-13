@@ -1,9 +1,18 @@
 package com.sbr.attendme;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintJob;
+import android.print.PrintManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +30,8 @@ public class ShowData extends AppCompatActivity {
         classs= (Classs) getIntent().getSerializableExtra("classs");
         webView=(WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setSupportZoom(true);
+        webView.getSettings().setBuiltInZoomControls(true);
         //webview.loadData(data, "text/html; charset=utf-8", "UTF-8");
         heads=new ArrayList<>();
         ArrayList<Student> students=MainActivity.db.getStudents();
@@ -58,5 +69,32 @@ public class ShowData extends AppCompatActivity {
         }
         body+="</table></body></html>";
         webView.loadData(body, "text/html; charset=utf-8", "UTF-8");
+    }
+    public  void createWebPagePrint(WebView webView) {
+        PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+        PrintDocumentAdapter printAdapter = webView.createPrintDocumentAdapter();
+        String jobName = getString(R.string.app_name) + " Document";
+        PrintAttributes.Builder builder = new PrintAttributes.Builder();
+        builder.setMediaSize(PrintAttributes.MediaSize.ISO_A5);
+        PrintJob printJob = printManager.print(jobName, printAdapter, builder.build());
+
+        if(printJob.isCompleted()){
+            Toast.makeText(getApplicationContext(), "PDF saved", Toast.LENGTH_LONG).show();
+        }
+        else if(printJob.isFailed()){
+            Toast.makeText(getApplicationContext(), "Can not save PDF", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.print_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        createWebPagePrint(webView);
+        return super.onOptionsItemSelected(item);
     }
 }

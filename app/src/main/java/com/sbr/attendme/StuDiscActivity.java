@@ -324,8 +324,8 @@ public class StuDiscActivity extends AppCompatActivity implements SwipeRefreshLa
         appear.play(scaleX).with(scaleY);
         appear.setDuration(300);
         AnimatorSet move=new AnimatorSet();
-        ObjectAnimator a1=ObjectAnimator.ofFloat(findTeach[index%3],"translationX",(screenWidth/2));
-        ObjectAnimator a2=ObjectAnimator.ofFloat(findTeach[index%3],"translationY",screenHeight);
+        ObjectAnimator a1=ObjectAnimator.ofFloat(findTeach[index%3],"translationX",(screenWidth/2)-findTeach[index%3].getX());
+        ObjectAnimator a2=ObjectAnimator.ofFloat(findTeach[index%3],"translationY",screenHeight-findTeach[index%3].getY());
         move.play(a1).with(a2).after(500);
         move.setDuration(700);
         AnimatorSet total=new AnimatorSet();

@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/drawable/ic_baseline_print_24.xml" value="0.1" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/drawable/lable.xml" value="0.6571428571428571" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/drawable/search_list.xml" value="0.1953125" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/activity_list_of_classes.xml" value="0.16" />
@@ -18,6 +19,7 @@
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/fragment_second.xml" value="0.33" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/layout/mylist.xml" value="0.25" />
         <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/menu/delete_menu.xml" value="0.33" />
+        <entry key="..\:/Users/Acer/AndroidStudioProjects/AttendMe/app/src/main/res/menu/print_menu.xml" value="0.33" />
       </map>
     </option>
   </component>

@@ -3,11 +3,19 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\Acer\\Desktop\\Keys\\my_release_keystore.jks')
+            storePassword '!@mG0d786'
+            keyAlias 'key0'
+            keyPassword '!@mG0d786'
+        }
+    }
     compileSdk 31
 
     defaultConfig {
         applicationId "com.sbr.attendme"
-        minSdk 16
+        minSdk 19
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -19,6 +27,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
